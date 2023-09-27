@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+  <PropertyGroup>
+<EnvironmentName>Development</EnvironmentName>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />

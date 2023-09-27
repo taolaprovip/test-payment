@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RePurpose_Models.Repositories.Implementations
 {
-    public class TransactionRepository : Repository<Transaction>, ITransaction
+    public class TransactionRepository : Repository<Transaction>, ITransactionRepository
     {
         public TransactionRepository(RePurposeContext context) : base(context)
         {

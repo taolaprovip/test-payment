@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RePurpose_Models.Repositories.Interfaces
 {
-    public interface ITransaction : IRepository<Transaction>
+    public interface ITransactionRepository : IRepository<Transaction>
     {
     }
 }

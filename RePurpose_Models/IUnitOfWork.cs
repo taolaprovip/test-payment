@@ -15,7 +15,8 @@ namespace RePurpose_Models
         public ILocationRepository Location { get; }
         public IItemRepository Item { get; }
         public IImageRepository Image { get; }
-        public ITransaction TransactionDb { get; }
+        public ITransactionRepository TransactionDb { get; }
+        public IWalletRepository Wallet { get; }
         Task<int> SaveChanges();
         IDbContextTransaction Transaction();
     }

@@ -18,13 +18,19 @@ namespace RePurpose_Models
         public ILocationRepository _location = null!;
         public IItemRepository _item = null!;
         public IImageRepository _image = null!;
-        public ITransaction _transaction = null!;
+        public ITransactionRepository _transaction = null!;
+        public IWalletRepository _wallet = null!;
 
         public UnitOfWork(RePurposeContext context)
         {
             _context = context;
         }
-        public ITransaction TransactionDb
+        public IWalletRepository Wallet
+        {
+            get { return _wallet ??= new WalletRepository(_context); }
+        }
+       
+        public ITransactionRepository TransactionDb
         {
             get { return _transaction ??= new TransactionRepository(_context); }
         }

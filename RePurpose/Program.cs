@@ -40,7 +40,7 @@ app.UseSwagger(c =>
 app.UseSwaggerUI(c =>
 {
         c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "production");
-        c.RoutePrefix = "swagger";
+        c.RoutePrefix = "api/swagger";
 });
 app.UseAuthentication();
 

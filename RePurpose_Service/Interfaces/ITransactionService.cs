@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RePurpose_Service.Interfaces
 {
-    internal interface ITransactionService
+    public interface ITransactionService
     {
     }
 }

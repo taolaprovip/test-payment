@@ -34,7 +34,7 @@ namespace RePurpose.Controllers
                 var rs = await _walletService.GetWalletById1(idClaim.Value);
                 var trans = await _transactionService.getmytransaction1(rs);
 
-                string vnp_Returnurl = "https://www.facebook.com/tranthe2uang/"; //URL nhan ket qua tra ve 
+                string vnp_Returnurl = "https://quangttse151013.monoinfinity.net/process-payment"; //URL nhan ket qua tra ve 
                 string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"; //URL thanh toan cua VNPAY 
                 string vnp_TmnCode = "0EDCIZXP"; //Ma định danh merchant kết nối (Terminal Id)
                 string vnp_HashSecret = "LNMRFLHQQFFKTEZZRQSSMVBYLXFLLFGE"; //Secret Key

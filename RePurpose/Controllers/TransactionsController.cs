@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RePurpose_Models.Models.Requests.Post;
 using RePurpose_Service.Interfaces;
 
+
 namespace RePurpose.Controllers
 {
     [Route("api/[controller]")]
@@ -42,7 +43,7 @@ namespace RePurpose.Controllers
         {
             var idClaim = await _memberService.GetMemberIdFromToken(HttpContext.User);
 
-            var rs = await _walletService.GetWalletById1(idClaim.Value); ;
+            var rs = await _walletService.GetWalletById1(idClaim.Value); 
             if (rs != null)
             {
                 return await _transactionService.getmytransaction(rs);
@@ -70,5 +71,6 @@ namespace RePurpose.Controllers
                 return BadRequest("Don't Create");
             }
         }
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RePurpose_Models.Entities;
 using RePurpose_Models.Models.Requests.Post;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,7 @@ namespace RePurpose_Service.Interfaces
         Task<IActionResult> GetTransactionById(long id);
         Task<IActionResult> GetAllTransaction();
         Task<IActionResult> getmytransaction(Guid? id);
+        Task<Transaction?> getmytransaction1(Guid? id);
+        void UpdateOrderInfoInDatabase(Transaction transaction);
     }
 }

@@ -6,7 +6,9 @@ using RePurpose_Models.Repositories.Implementations;
 using RePurpose_Models.Repositories.Interfaces;
 using RePurpose_Service.Implementations;
 using RePurpose_Service.Interfaces;
+using RePurpose_Utility.Setting;
 using System.Text;
+using VNPAY_CS_ASPX;
 
 namespace RePurpose.Configurations
 {
@@ -43,6 +45,8 @@ namespace RePurpose.Configurations
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IWalletService, WalletService>();
+            services.AddHttpContextAccessor();
+
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

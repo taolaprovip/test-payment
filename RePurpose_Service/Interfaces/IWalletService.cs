@@ -13,6 +13,6 @@ namespace RePurpose_Service.Interfaces
         Task<IActionResult> GetWalletById(Guid id);
         Task<IActionResult> GetAllWalletById();
         Task<Guid?> GetWalletById1(Guid id);
-        Task<IActionResult> IPNURL(PaymentInfo vnpay);
+/*        Task<IActionResult> IPNURL(PaymentInfo vnpay);*/
     }
 }

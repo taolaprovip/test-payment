@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace RePurpose_Service.Implementations
 {
+
     public class TransactionService : BaseService, ITransactionService
     {
         public TransactionService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
@@ -32,6 +33,16 @@ namespace RePurpose_Service.Implementations
                 return new JsonResult(tran);
             }
             return new StatusCodeResult(StatusCodes.Status404NotFound);
+        }
+        public async Task<Transaction?> getmytransaction1(Guid? id)
+        {
+            var tran = await _unitOfWork.TransactionDb.GetMany(product => product.WalletId.Equals(id) && product.Type == "PENDING")
+                .FirstOrDefaultAsync();
+            if (tran != null)
+            {
+                return tran;
+            }
+            return null;
         }
         public async Task<IActionResult> getmytransaction(Guid? id)
         {
@@ -76,6 +87,10 @@ namespace RePurpose_Service.Implementations
            
 
         }
+        public void UpdateOrderInfoInDatabase(Transaction transaction)
+        {
+            _unitOfWork.TransactionDb.Update(transaction);
+        }
         /*public async Task<IActionResult> GetTransactionById(Guid id)
         {
             var walletId = await _unitOfWork.Wallet.FirstOrDefaultAsync(m => m.MemberId == id);
@@ -90,5 +105,6 @@ namespace RePurpose_Service.Implementations
             }
             return new JsonResult(transaction);
         }*/
+
     }
 }

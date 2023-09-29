@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +25,7 @@ namespace RePurpose_Service.Implementations
     {
         private readonly IMemberRepository _memberRepository;
         private readonly AppSetting _appSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<AppSetting> appSettings) : base(unitOfWork, mapper)
         {

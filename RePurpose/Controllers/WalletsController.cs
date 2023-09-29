@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RePurpose_Models.Models.Requests.Post;
-using RePurpose_Models.Models.Response.Get;
-using RePurpose_Service.Implementations;
 using RePurpose_Service.Interfaces;
+using VNPAY_CS_ASPX;
 
 namespace RePurpose.Controllers
 {
@@ -11,13 +9,16 @@ namespace RePurpose.Controllers
     [ApiController]
     public class WalletsController : ControllerBase
     {
-        private readonly IWalletService _walletService;
+        private readonly ITransactionService _transactionService;
         private readonly IMemberService _memberService;
+        private readonly IWalletService _walletService;
 
-        public WalletsController(IWalletService walletService, IMemberService memberService)
+
+        public WalletsController(ITransactionService transactionService, IMemberService memberService, IWalletService walletService)
         {
-            _walletService = walletService;
+            _transactionService = transactionService;
             _memberService = memberService;
+            _walletService = walletService;
         }
 
         [HttpGet("getAllWallet")]
@@ -45,26 +46,107 @@ namespace RePurpose.Controllers
         }
 
         [HttpGet("/process-payment")]
-        public async Task<IActionResult> ProcessPayment([FromQuery] PaymentInfo paymentInfo)
+        [Authorize]
+        public async Task<IActionResult> ProcessPayment()
         {
+            string returnContent = string.Empty;
 
             try
             {
-               
-                var rs = await _walletService.IPNURL(paymentInfo);
-                if (rs is JsonResult jsonResult)
-                {
-                    if (jsonResult.Value is null) return BadRequest("Message: Don't ProcessPayment");
-                    return StatusCode(StatusCodes.Status201Created, jsonResult.Value);
-                }
-                return StatusCode(StatusCodes.Status400BadRequest, "Bad");
+                string vnp_HashSecret = "LNMRFLHQQFFKTEZZRQSSMVBYLXFLLFGE";
+                var vnpayData = new Dictionary<string, string>();
 
+                foreach (var key in Request.Query.Keys)
+                {
+                    var values = Request.Query[key];
+                    if (values.Count > 0)
+                    {
+                        vnpayData[key] = values[0];
+                    }
+                }
+
+                VnPayLibrary vnpay = new VnPayLibrary();
+                foreach (var entry in vnpayData)
+                {
+                    string key = entry.Key;
+                    string value = entry.Value;
+
+                    if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+                    {
+                        vnpay.AddResponseData(key, value);
+                    }
+                }
+
+
+                // Lấy thông tin từ Query String
+                long orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef"));
+                long vnp_Amount = Convert.ToInt64(vnpay.GetResponseData("vnp_Amount")) / 100;
+                long vnpayTranId = Convert.ToInt64(vnpay.GetResponseData("vnp_TransactionNo"));
+                string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+                string vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
+                string vnp_SecureHash = Request.Query["vnp_SecureHash"].ToString(); // Lấy giá trị của tham số vnp_SecureHash và chuyển đổi thành chuỗi
+
+                bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
+
+                var idClaim = await _memberService.GetMemberIdFromToken(HttpContext.User);
+                var rs = await  _walletService.GetWalletById1(idClaim.Value);
+                var trans = await  _transactionService.getmytransaction1(rs);
+
+                if (checkSignature)
+                {
+                    
+
+                    if (trans != null)
+                    {
+                        if (trans.Amount == vnp_Amount)
+                        {
+                            if (trans.Type == "PENDING")
+                            {
+                                if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
+                                {
+                                    // Thanh toán thành công
+                                    trans.Type = "APPROVE";
+                                    returnContent = "{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}";
+                                }
+                                else
+                                {
+                                    // Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
+                                    trans.Type = "REJECT";
+                                    returnContent = "{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}";
+                                }
+
+                                // Cập nhật thông tin đơn hàng vào CSDL
+                                _transactionService.UpdateOrderInfoInDatabase(trans);
+                            }
+                            else
+                            {
+                                returnContent = "{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}";
+                            }
+                        }
+                        else
+                        {
+                            returnContent = "{\"RspCode\":\"04\",\"Message\":\"invalid amount\"}";
+                        }
+                    }
+                    else
+                    {
+                        returnContent = "{\"RspCode\":\"01\",\"Message\":\"Order not found\"}";
+                    }
+                }
+                else
+                {
+                    returnContent = "{\"RspCode\":\"97\",\"Message\":\"Invalid signature\"}";
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest("Don't ProcessPayment");
+                // Xử lý ngoại lệ
+                returnContent = "{\"RspCode\":\"99\",\"Message\":\"An error occurred\"}";
             }
-           
+
+            return Content(returnContent, "application/json");
         }
+
+       
     }
 }

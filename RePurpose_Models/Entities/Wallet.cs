@@ -10,7 +10,7 @@ namespace RePurpose_Models.Entities
     {
         public Guid WalletId { get; set; }
         public Guid? MemberId { get; set; }
-        public decimal? Balance { get; set; }
+        public decimal? Balance { get; set; } = 0;
         public DateTime ?LastBalanceUpdate { get; set; }
         public Member? Member { get; set; }
 

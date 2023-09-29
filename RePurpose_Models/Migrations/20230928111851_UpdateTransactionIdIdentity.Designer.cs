@@ -12,8 +12,8 @@ using RePurpose_Models.Entities;
 namespace RePurpose_Models.Migrations
 {
     [DbContext(typeof(RePurposeContext))]
-    [Migration("20230925172903_update-tb-location")]
-    partial class updatetblocation
+    [Migration("20230928111851_UpdateTransactionIdIdentity")]
+    partial class UpdateTransactionIdIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,7 +58,7 @@ namespace RePurpose_Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ItemImage")
+                    b.Property<Guid?>("ItemImage")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -74,7 +74,7 @@ namespace RePurpose_Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -84,16 +84,13 @@ namespace RePurpose_Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("GiverId")
+                    b.Property<Guid?>("GiverId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("ItemCategory")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ItemLocation")
+                    b.Property<Guid?>("ItemLocation")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -107,7 +104,7 @@ namespace RePurpose_Models.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ReceiverId")
+                    b.Property<Guid?>("ReceiverId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Type")
@@ -139,7 +136,7 @@ namespace RePurpose_Models.Migrations
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("LocationMember")
+                    b.Property<Guid?>("LocationMember")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Longitude")
@@ -148,7 +145,8 @@ namespace RePurpose_Models.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LocationMember")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[LocationMember] IS NOT NULL");
 
                     b.ToTable("Locations");
                 });
@@ -225,13 +223,64 @@ namespace RePurpose_Models.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("RePurpose_Models.Entities.Transaction", b =>
+                {
+                    b.Property<long>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TransactionId"), 1L, 1);
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("WalletId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("RePurpose_Models.Entities.Wallet", b =>
+                {
+                    b.Property<Guid>("WalletId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("LastBalanceUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("MemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("WalletId");
+
+                    b.HasIndex("MemberId")
+                        .IsUnique()
+                        .HasFilter("[MemberId] IS NOT NULL");
+
+                    b.ToTable("Wallets");
+                });
+
             modelBuilder.Entity("RePurpose_Models.Entities.Image", b =>
                 {
                     b.HasOne("RePurpose_Models.Entities.Item", "Item")
                         .WithMany("Images")
                         .HasForeignKey("ItemImage")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Item");
                 });
@@ -241,25 +290,22 @@ namespace RePurpose_Models.Migrations
                     b.HasOne("RePurpose_Models.Entities.Category", "Category")
                         .WithMany("Items")
                         .HasForeignKey("CategoryId")
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("RePurpose_Models.Entities.Member", "Giver")
                         .WithMany("ItemsGiven")
                         .HasForeignKey("GiverId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("RePurpose_Models.Entities.Location", "Location")
                         .WithMany("Items")
                         .HasForeignKey("ItemLocation")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("RePurpose_Models.Entities.Member", "Receiver")
                         .WithMany("ItemsReceived")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Category");
 
@@ -274,8 +320,7 @@ namespace RePurpose_Models.Migrations
                 {
                     b.HasOne("RePurpose_Models.Entities.Member", "Member")
                         .WithOne("Location")
-                        .HasForeignKey("RePurpose_Models.Entities.Location", "LocationMember")
-                        .IsRequired();
+                        .HasForeignKey("RePurpose_Models.Entities.Location", "LocationMember");
 
                     b.Navigation("Member");
                 });
@@ -285,8 +330,27 @@ namespace RePurpose_Models.Migrations
                     b.HasOne("RePurpose_Models.Entities.Member", "Member")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("TokenMember")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("RePurpose_Models.Entities.Transaction", b =>
+                {
+                    b.HasOne("RePurpose_Models.Entities.Wallet", "Wallet")
+                        .WithMany("Transactions")
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("RePurpose_Models.Entities.Wallet", b =>
+                {
+                    b.HasOne("RePurpose_Models.Entities.Member", "Member")
+                        .WithOne("Wallet")
+                        .HasForeignKey("RePurpose_Models.Entities.Wallet", "MemberId");
 
                     b.Navigation("Member");
                 });
@@ -316,6 +380,14 @@ namespace RePurpose_Models.Migrations
                         .IsRequired();
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Wallet")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RePurpose_Models.Entities.Wallet", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

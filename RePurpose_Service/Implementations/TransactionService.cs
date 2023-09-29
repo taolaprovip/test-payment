@@ -44,9 +44,9 @@ namespace RePurpose_Service.Implementations
             }
             return new StatusCodeResult(StatusCodes.Status404NotFound);
         }
-        public async Task<IActionResult> GetTransactionById(Guid id)
+        public async Task<IActionResult> GetTransactionById(long id)
         {
-            var tran = await _unitOfWork.TransactionDb.GetMany(product => product.TransactionId.Equals(id))
+            var tran = await _unitOfWork.TransactionDb.GetMany(product => product.TransactionId == id)
                 .ProjectTo<TransactionViewModel>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
             if (tran != null)
@@ -64,7 +64,7 @@ namespace RePurpose_Service.Implementations
             }
             Transaction transaction = new Transaction
             {
-                TransactionId = Guid.NewGuid(),
+                
                 WalletId = walletId.WalletId,
                 Amount = transactionCreateModel.Amount,
                 Type = "PENDING",

@@ -18,11 +18,11 @@ namespace RePurpose_Models.Entities
             : base(options)
         {
         }
-        /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-         {
-             string connection = "Data Source = (local); Database=RePurpose;uid=sa;pwd=123456; Trusted_Connection=true;TrustServerCertificate=true";
-             optionsBuilder.UseSqlServer(connection);
-         }*/
+       /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string connection = "Server=database.monoinfinity.net, 1433;Database=RePurpose;Persist Security Info=False;User ID=sa;Password=1234567890Aa;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+            optionsBuilder.UseSqlServer(connection);
+        }*/
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
@@ -38,7 +38,9 @@ namespace RePurpose_Models.Entities
 
             modelBuilder.Entity<Wallet>().HasKey(w => w.WalletId);
             modelBuilder.Entity<Transaction>().HasKey(t => t.TransactionId);
-
+            modelBuilder.Entity<Transaction>()
+            .Property(e => e.TransactionId)
+            .ValueGeneratedOnAdd();
             // Thiết lập mối quan hệ giữa Wallet và Transaction
             modelBuilder.Entity<Wallet>()
                 .HasMany(w => w.Transactions)

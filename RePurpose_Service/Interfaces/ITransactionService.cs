@@ -11,7 +11,7 @@ namespace RePurpose_Service.Interfaces
     public interface ITransactionService
     {
         Task<IActionResult> CreateTransaction(TransactionCreateModel transactionCreateModel, Guid id);
-        Task<IActionResult> GetTransactionById(Guid id);
+        Task<IActionResult> GetTransactionById(long id);
         Task<IActionResult> GetAllTransaction();
         Task<IActionResult> getmytransaction(Guid? id);
     }

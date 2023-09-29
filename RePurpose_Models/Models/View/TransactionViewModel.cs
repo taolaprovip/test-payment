@@ -8,7 +8,7 @@ namespace RePurpose_Models.Models.View
 {
     public class TransactionViewModel
     {
-        public Guid TransactionId { get; set; }
+        public long TransactionId { get; set; }
         public Guid? WalletId { get; set; }
         public string? Type { get; set; }
         public decimal? Amount { get; set; }

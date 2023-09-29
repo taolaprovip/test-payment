@@ -223,9 +223,11 @@ namespace RePurpose_Models.Migrations
 
             modelBuilder.Entity("RePurpose_Models.Entities.Transaction", b =>
                 {
-                    b.Property<Guid>("TransactionId")
+                    b.Property<long>("TransactionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TransactionId"), 1L, 1);
 
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");

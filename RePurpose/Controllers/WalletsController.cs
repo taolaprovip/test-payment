@@ -46,7 +46,6 @@ namespace RePurpose.Controllers
         }
 
         [HttpGet("/process-payment")]
-        [Authorize]
         public async Task<IActionResult> ProcessPayment()
         {
             string returnContent = string.Empty;
@@ -88,9 +87,7 @@ namespace RePurpose.Controllers
 
                 bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
 
-                var idClaim = await _memberService.GetMemberIdFromToken(HttpContext.User);
-                var rs = await  _walletService.GetWalletById1(idClaim.Value);
-                var trans = await  _transactionService.getmytransaction1(rs);
+                var trans = await  _transactionService.GetTransactionById(orderId);
 
                 if (checkSignature)
                 {

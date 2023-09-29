@@ -55,6 +55,16 @@ namespace RePurpose_Service.Implementations
             }
             return new StatusCodeResult(StatusCodes.Status404NotFound);
         }
+        public Transaction getmytransaction2(long id)
+        {
+            var tran =  _unitOfWork.TransactionDb.GetMany(product => product.TransactionId == id)
+                .FirstOrDefault();
+            if (tran != null)
+            {
+                return tran;
+            }
+            return null;
+        }
         public async Task<IActionResult> GetTransactionById(long id)
         {
             var tran = await _unitOfWork.TransactionDb.GetMany(product => product.TransactionId == id)

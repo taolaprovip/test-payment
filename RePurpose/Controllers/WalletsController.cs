@@ -87,7 +87,7 @@ namespace RePurpose.Controllers
 
                 bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
 
-                var trans = await  _transactionService.GetTransactionById(orderId);
+                var trans =  _transactionService.getmytransaction2(orderId);
 
                 if (checkSignature)
                 {

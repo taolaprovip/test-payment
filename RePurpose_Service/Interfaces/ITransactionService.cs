@@ -16,6 +16,7 @@ namespace RePurpose_Service.Interfaces
         Task<IActionResult> GetAllTransaction();
         Task<IActionResult> getmytransaction(Guid? id);
         Task<Transaction?> getmytransaction1(Guid? id);
+        Transaction getmytransaction2(long id);
         void UpdateOrderInfoInDatabase(Transaction transaction);
     }
 }

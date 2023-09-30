@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RePurpose_Models;
+using RePurpose_Models.Entities;
 using RePurpose_Models.Models.Response.Get;
 using RePurpose_Models.Models.View;
 using RePurpose_Service.Interfaces;
@@ -27,6 +28,15 @@ namespace RePurpose_Service.Implementations
             if (tran != null)
             {
                 return tran.WalletId;
+            }
+            return null;
+        }
+        public async Task<Wallet?> GetWalletBy(Guid? id)
+        {
+            var tran = await _unitOfWork.Wallet.GetMany(product => product.WalletId.Equals(id)).FirstOrDefaultAsync();
+            if (tran != null)
+            {
+                return tran;
             }
             return null;
         }

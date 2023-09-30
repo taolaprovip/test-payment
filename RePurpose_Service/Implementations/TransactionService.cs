@@ -55,7 +55,7 @@ namespace RePurpose_Service.Implementations
             }
             return new StatusCodeResult(StatusCodes.Status404NotFound);
         }
-        public Transaction getmytransaction2(long id)
+        public async Task<Transaction> getmytransaction2(long id)
         {
             var tran =  _unitOfWork.TransactionDb.GetMany(product => product.TransactionId == id)
                 .FirstOrDefault();
@@ -97,9 +97,10 @@ namespace RePurpose_Service.Implementations
            
 
         }
-        public void UpdateOrderInfoInDatabase(Transaction transaction)
+        public async Task UpdateOrderInfoInDatabase(Transaction transaction)
         {
-            _unitOfWork.TransactionDb.Update(transaction);
+             _unitOfWork.TransactionDb.Update(transaction);
+            await _unitOfWork.SaveChanges();
         }
         /*public async Task<IActionResult> GetTransactionById(Guid id)
         {

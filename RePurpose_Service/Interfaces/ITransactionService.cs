@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RePurpose_Models.Entities;
 using RePurpose_Models.Models.Requests.Post;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RePurpose_Service.Interfaces
 {
@@ -16,7 +11,7 @@ namespace RePurpose_Service.Interfaces
         Task<IActionResult> GetAllTransaction();
         Task<IActionResult> getmytransaction(Guid? id);
         Task<Transaction?> getmytransaction1(Guid? id);
-        Transaction getmytransaction2(long id);
-        void UpdateOrderInfoInDatabase(Transaction transaction);
+        Task<Transaction> getmytransaction2(long id);
+        Task UpdateOrderInfoInDatabase(Transaction transaction);
     }
 }

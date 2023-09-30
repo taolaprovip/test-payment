@@ -87,12 +87,14 @@ namespace RePurpose.Controllers
 
                 bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
 
-                var trans =  _transactionService.getmytransaction2(orderId);
+
+                var trans = await _transactionService.getmytransaction2(orderId);
+              
+                var wallet = await _walletService.GetWalletBy(trans.WalletId);
+                
 
                 if (checkSignature)
                 {
-                    
-
                     if (trans != null)
                     {
                         if (trans.Amount == vnp_Amount)
@@ -103,7 +105,9 @@ namespace RePurpose.Controllers
                                 {
                                     // Thanh toán thành công
                                     trans.Type = "APPROVE";
+                                    wallet.Balance += trans.Amount;
                                     returnContent = "{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}";
+                                    
                                 }
                                 else
                                 {
@@ -113,7 +117,7 @@ namespace RePurpose.Controllers
                                 }
 
                                 // Cập nhật thông tin đơn hàng vào CSDL
-                                _transactionService.UpdateOrderInfoInDatabase(trans);
+                               await _transactionService.UpdateOrderInfoInDatabase(trans);
                             }
                             else
                             {
